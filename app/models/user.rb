@@ -4,7 +4,9 @@
 
 class User < ActiveRecord::Base
   belongs_to :slack_team
+  has_many :cards
+  has_many :payments
 
   validates_presence_of :slack_team_id, :slack_user_id, :slack_username
-  
+
 end

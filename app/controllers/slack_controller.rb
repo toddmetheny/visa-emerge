@@ -96,12 +96,41 @@ class SlackController < ApplicationController
   def command
     text = params[:text]
 
+    slack_team = SlackTeam.find_by(team_id: params[:team_id])
+
     if not text.split(' ')[0].include?('@')
       render text: "Please use the format: /visapay @user $X"
       return
+    elsif text.split(' ')[0] == "@setup"
+      p "text: #{text.split(' ')}"
+      cc_info = text.split(' ')
+      Card.new(
+        user_id: params[:user_id],
+        card_number: cc_info[1],
+        expiration: cc_info[2],
+        csv: cc_info[3]
+      )
+      # p text.split(' ')[]
+
+      # method call that runs query, creates card from response, 
+      # and then returns success message to user
+
+      query = {
+        token: slack_team.access_token,
+        channel: params[:user_name],
+        text: "You successfully added a card",
+        username: 'visapay',
+        as_user: true
+      }.to_query
+
+      response = HTTParty.get("https://slack.com/api/chat.postMessage?#{query}")
+
+      render text: "You successfully added a card"
+      return 
     end
 
-    slack_team = SlackTeam.find_by(team_id: params[:team_id])
+
+    p "params: #{params.inspect}"
 
     # get the from user or create it
     from_user = slack_team.users.where(
@@ -116,7 +145,25 @@ class SlackController < ApplicationController
       slack_username: to_slack_username
     )
 
-    if to_user.count == 0
+    if from_user.cards.count == 0
+      # move all these queries to methods and pass data as args
+      query = {
+        token: slack_team.access_token,
+        channel: params[:user_name],
+        text: "Setup your account by entering /visapay @setup CC# expiration csv",
+        username: 'visapay',
+        as_user: true
+      }.to_query
+
+      response = HTTParty.get("https://slack.com/api/chat.postMessage?#{query}")
+
+      p response.body
+
+      render text: "Setup your account by entering /visapay @setup CC# csv expiration"
+
+    # elsif 
+
+    elsif to_user.count == 0
 
       query = {
         token: slack_team.access_token,
@@ -128,9 +175,9 @@ class SlackController < ApplicationController
 
       response = HTTParty.get("https://slack.com/api/chat.postMessage?#{query}")
 
+      render text: "SWEET"
     end
 
-    render text: "SWEET"
 
   end
 
