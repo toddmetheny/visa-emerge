@@ -10,6 +10,8 @@ gem 'spring', :group => :development
 
 gem 'sqlite3'
 
+gem 'rest-client'
+gem 'pry'
 
 
 # To use ActiveModel has_secure_password
