@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   get '/slack/redirect_uri' => 'slack#redirect_uri'
   get '/slack/authorize' => 'slack#authorize'
+  post '/slack/command' => 'slack#command'
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

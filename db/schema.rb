@@ -11,7 +11,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160416162524) do
+ActiveRecord::Schema.define(version: 20160416183027) do
+
+  create_table "cards", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "card_number"
+    t.string   "expiration"
+    t.string   "csv"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "cards", ["user_id"], name: "index_cards_on_user_id"
+
+  create_table "payments", force: :cascade do |t|
+    t.integer  "from_user_id"
+    t.integer  "from_card_id"
+    t.integer  "to_user_id"
+    t.integer  "to_card_id"
+    t.integer  "amount"
+    t.string   "status"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
 
   create_table "slack_teams", force: :cascade do |t|
     t.boolean  "ok"
@@ -29,5 +51,15 @@ ActiveRecord::Schema.define(version: 20160416162524) do
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
   end
+
+  create_table "users", force: :cascade do |t|
+    t.integer  "slack_team_id"
+    t.string   "slack_user_id"
+    t.string   "slack_username"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "users", ["slack_team_id"], name: "index_users_on_slack_team_id"
 
 end

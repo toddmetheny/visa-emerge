@@ -51,7 +51,7 @@ class WitWrapper < ActiveRecord::Base
       :transactionHistory => -> (session_id, context) {
         puts "Transaction history"
         return context
-      },
+      }
     }
     client = Wit.new access_token, actions
 
