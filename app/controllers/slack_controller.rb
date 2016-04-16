@@ -5,16 +5,14 @@ class SlackController < ApplicationController
   end
 
   def redirect_uri
-    
     redirect = ENV['SLACK_REDIRECT_URI']
-    # call oauth API
-    # get code and make request
     client_id = ENV['SLACK_CLIENT_ID']
     client_secret = ENV['SLACK_CLIENT_SECRET']
 
     response = HTTParty.get("https://slack.com/api/oauth.access?client_id=#{client_id}&client_secret=#{client_secret}&code=#{params[:code]}&redirect_uri=#{redirect}")
     parsed_body = JSON.parse(response.body)
     p "parsed_body: #{parsed_body}"
+
     slack_team = SlackTeam.new(
       ok: parsed_body['ok'], 
       access_token: parsed_body['access_token'],
@@ -31,12 +29,12 @@ class SlackController < ApplicationController
     )
 
     if slack_team.save
-      p "#{'!'*20}"
-      p "created new slack team"
-      p "#{'!'*20}"
+      p "Success!"
+    else
+      p "What we have here is...failure to authenticate."
     end
-
-    p slack_team
+    
+    # payload
     # {"ok"=>true, "access_token"=>"xoxp-4592131850-4592131860-35296188357-5ae4f8cc33", 
     # "scope"=>"identify,bot,commands,incoming-webhook", "user_id"=>"U04HE3VRA", "team_name"=>"Miami Tech", 
     #"team_id"=>"T04HE3VR0", "incoming_webhook"=>{"channel"=>"#emerge", "channel_id"=>"C118AHJ6Q", 
@@ -45,7 +43,6 @@ class SlackController < ApplicationController
     render text: 'Success'
   end
 
-  def command
 
     # "team_id"=>"T04HE3VR0", 
     # "team_domain"=>"miamitech", 
@@ -55,7 +52,7 @@ class SlackController < ApplicationController
     # "user_name"=>"alain", 
     # "command"=>"/visapay", 
     # "text"=>"testing hahaha"
-
+  def command
     text = params[:text]
 
     if not text.split(' ')[0].include?('@')
@@ -91,9 +88,6 @@ class SlackController < ApplicationController
       response = HTTParty.get("https://slack.com/api/chat.postMessage?#{query}")
 
     end
-
-
-
 
     render text: "SWEET"
 
