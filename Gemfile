@@ -15,6 +15,8 @@ gem 'httparty'
 gem 'better_errors'
 gem 'binding_of_caller'
 
+gem 'slack-api'
+
 # To use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
