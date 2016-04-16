@@ -1,12 +1,18 @@
 class SlackController < ApplicationController
 
+  def authorize
+    redirect_to "https://slack.com/oauth/authorize?scope=incoming-webhook,commands,bot&client_id=3110874209.35282360436&state=read,post,client&redirect_uri=#{ENV['SLACK_REDIRECT_URI']}"
+  end
 
   def redirect_uri
-    ENV['SLACK_REDIRECT_URI'] = 'https://1f4c10f0.ngrok.io/slack/redirect_uri'
+    
+    redirect = ENV['SLACK_REDIRECT_URI']
     # call oauth API
     # get code and make request
+    client_id = ENV['SLACK_CLIENT_ID']
+    client_secret = ENV['SLACK_CLIENT_SECRET']
 
-    response = HTTParty.get("https://slack.com/api/oauth.access?client_id=3110874209.35282360436&client_secret=69933a9e160d3c06da5f5276cedafe43&code=#{params[:code]}&redirect_uri=#{ENV['SLACK_REDIRECT_URI']}")
+    response = HTTParty.get("https://slack.com/api/oauth.access?client_id=#{client_id}&client_secret=#{client_secret}&code=#{params[:code]}&redirect_uri=#{redirect}")
     parsed_body = JSON.parse(response.body)
     p "parsed_body: #{parsed_body}"
     slack_team = SlackTeam.new(
