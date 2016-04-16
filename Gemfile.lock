@@ -141,6 +141,7 @@ GEM
     websocket-driver (0.6.3)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
+    wit (3.3.0)
 
 PLATFORMS
   ruby
@@ -157,6 +158,7 @@ DEPENDENCIES
   slack-api
   spring
   sqlite3
+  wit
 
 BUNDLED WITH
    1.11.2

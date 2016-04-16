@@ -9,7 +9,7 @@ gem 'httparty'
 gem 'dotenv-rails', :groups => [:development, :test]
 
 gem 'rest-client'
-
+gem 'wit'
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
