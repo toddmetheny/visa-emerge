@@ -169,5 +169,18 @@ module Visa
       return JSON.parse(response)
     end
 
+    def self.transaction
+      pull = self.pull
+      push = self.push
+
+      obj = {
+        pull: pull,
+        push: push
+      }
+
+      return obj
+
+    end
+
   end
 end
