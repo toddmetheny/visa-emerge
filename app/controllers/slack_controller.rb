@@ -1,7 +1,7 @@
 class SlackController < ApplicationController
 
   def authorize
-    redirect_to "https://slack.com/oauth/authorize?scope=incoming-webhook,commands,bot,chat:write:bot&client_id=3110874209.35282360436&state=read,post,client,identify,chat:write:user&redirect_uri=#{ENV['SLACK_REDIRECT_URI']}"
+    redirect_to "https://slack.com/oauth/authorize?scope=identify,bot,incoming-webhook&client_id=3110874209.35282360436&redirect_uri=#{ENV['SLACK_REDIRECT_URI']}"
   end
 
   def redirect_uri
@@ -35,6 +35,45 @@ class SlackController < ApplicationController
       p "created new slack team"
       p "#{'!'*20}"
     end
+
+    # messages = Queue.new # this is like redis or zero-mq, but it's dead simple.
+    #                        # See also: http://ruby-doc.org/core-2.1.5/Queue.html
+
+    # # slack client thread, which will only forwards messages to the other
+    # # thread
+
+
+    # # first_url = SlackRTM.get_url(token: slack_team.access_token) # get one on https://api.slack.com/web#basics
+    # # puts first_url.inspect
+    
+    # # second_url = SlackRTM.get_url token: slack_team.bot_access_token # get one on https://api.slack.com/web#basics
+    # # puts second_url.inspect
+
+    # url = JSON.parse(HTTParty.post("https://slack.com/api/rtm.start?token=#{slack_team.access_token}").body)['url']
+    # puts url.inspect
+
+    # t = Thread.new do
+
+    #   client = SlackRTM::Client.new websocket_url: URI(url)
+    #   client.on(:message) do |data|
+    #     if data['type'] == 'message'
+    #       messages << data
+    #     end
+    #   end
+    #   client.main_loop # be careful, this never returns. That's why you need to thread.
+    # end
+    # t.abort_on_exception = true # will notify us if an exception happens
+
+    # t = Thread.new do
+    #   loop do
+    #     msg = messages.pop
+    #     # do something with the slack message. Like storing in db, if you want to log
+    #     puts msg.class # => Hash
+    #     p msg     # => {type: 'message', user: 'U13131', channel: 'C121212', text: 'Hello world !'}
+    #               # see also: https://api.slack.com/events/message
+    #   end
+    # end
+    # t.abort_on_exception = true # will notify us if an exception happens
 
     p slack_team
     # {"ok"=>true, "access_token"=>"xoxp-4592131850-4592131860-35296188357-5ae4f8cc33", 

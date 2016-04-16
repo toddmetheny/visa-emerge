@@ -21,10 +21,10 @@ class Message < ActiveRecord::Base
 
     query = {
       token: slack_team.access_token,
-      channel: '@toddmetheny',
-      text: 'testing',
+      channel: '@alain',
+      text: 'testing 123',
       username: 'visapay',
-      as_user: false
+      as_user: true
     }.to_query
 
 
