@@ -4,15 +4,20 @@ source 'https://rubygems.org'
 gem 'rails', '4.2.5'
 
 gem 'rails-api'
-
-gem 'spring', :group => :development
-
-
 gem 'sqlite3'
+gem 'httparty'
+gem 'dotenv-rails', :groups => [:development, :test]
 
 gem 'rest-client'
-gem 'pry'
 
+group :development do
+  gem 'better_errors'
+  gem 'binding_of_caller'
+  gem 'spring'
+  gem 'pry'
+end
+
+gem 'slack-api'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
