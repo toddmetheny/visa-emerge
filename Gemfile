@@ -15,6 +15,7 @@ group :development do
 end
 
 gem 'slack-api'
+gem 'websocket-rails'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
