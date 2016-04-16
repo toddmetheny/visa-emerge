@@ -54,7 +54,7 @@ class WitWrapper < ActiveRecord::Base
     }
     client = Wit.new access_token, actions
 
-    session_id = 'my-user-id-42'
+    session_id = 'my-user-id-0132'
 
     # puts 'What is your credit card number?'
     # response_1 = client.run_actions session_id, '4242424242424242', {}
@@ -64,8 +64,11 @@ class WitWrapper < ActiveRecord::Base
     # puts '-------cc response-----'
     # p response_3
 
-    response_1 = client.run_actions session_id, 'What is my transaction history?', {}
-    p response_1
+    # response_1 = client.run_actions session_id, 'What is my transaction history?', {}
+    # p response_1
+
+    response = client.run_actions session_id, 'Send @todd $5', {}
+    p response
 
   end
 end
