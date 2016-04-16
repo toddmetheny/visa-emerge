@@ -8,10 +8,13 @@ gem 'sqlite3'
 gem 'httparty'
 gem 'dotenv-rails', :groups => [:development, :test]
 
-group :development do 
+gem 'rest-client'
+
+group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'spring'
+  gem 'pry'
 end
 
 gem 'slack-api'
