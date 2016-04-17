@@ -148,9 +148,20 @@ class SlackController < ApplicationController
       render text: text
     elsif text.split(' ')[0] == "@received"
       p "inside received"
+
       text = SlackTeam.received_payments(from_user.id)
       SlackTeam.query_stuffs(slack_team.access_token, from_user.slack_username, text)
       render text: text
+    elsif text.split(' ')[0] == "@create_event"
+      create_event = Event.new(user_id: from_user.id)
+      text.split('|')[1] = create_event.description
+      text.split('|')[2] = create_event.amount_owed
+      text.split('|')[3] = create_event.payment_to
+      create_event.save
+      # event = Event.new(amount_owed: amount_owed, payment_to: payment_to, description: description)
+# text = "xxx"
+# from_user.slac_username, text
+# render text: text
     elsif text.split(' ')[0] == "@paid"
       p "inside paid"
       text = SlackTeam.paid_history(from_user.id)
