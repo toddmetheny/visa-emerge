@@ -119,10 +119,10 @@ class SlackController < ApplicationController
             payment.status = "pending"
             if payment.save
               puts "payment saved"
+              # make the api call to actually make the fucking payment
             else
               puts "payment didn't save"
             end
-            # make the api call to actually make the fucking payment
           end
         end
       else
@@ -172,6 +172,7 @@ class SlackController < ApplicationController
       SlackTeam.query_stuffs(slack_team.access_token, to_slack_username, text)
       render text: text
     else
+      # actually make the fucking payment
       text = "Payment to #{to_slack_username} from @#{from_user.slack_username} is pending"
       SlackTeam.query_stuffs(slack_team.access_token, to_slack_username, text)
       render text: text
