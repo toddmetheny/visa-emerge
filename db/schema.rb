@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160417051505) do
+ActiveRecord::Schema.define(version: 20160417063333) do
 
   create_table "cards", force: :cascade do |t|
     t.integer  "user_id"
@@ -30,7 +30,10 @@ ActiveRecord::Schema.define(version: 20160417051505) do
     t.integer  "amount_owed"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.integer  "user_id"
   end
+
+  add_index "events", ["user_id"], name: "index_events_on_user_id"
 
   create_table "invoices", force: :cascade do |t|
     t.string   "status"
