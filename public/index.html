@@ -27,6 +27,7 @@
       }
       p {
         letter-spacing: 1px;
+        padding-left: 165px;
       }
       .background-image {
         /*background: url('piggybank.jpeg') no-repeat center center;*/
@@ -37,6 +38,12 @@
       .container {
         padding-top: 225px;
         text-align: center;
+      }
+      #visa {
+        float: left;
+        margin-left: 100px;
+        padding-top: 22px;
+        padding-left: 50px;
       }
       @media only screen and (max-width: 500px) {
         .container {
@@ -53,7 +60,8 @@
   <body>
     <div class="background-image">
       <div class="container col-md-6">
-        <h1>Visa Pay</h1>
+        <img id="visa" src="https://s3.amazonaws.com/emergehack/visa-logo.png" alt="visa logo">
+        <h1>Pay</h1>
         <p class="">Send and receive payments through Slack!</p>
         <p>
           <a href="/slack/authorize"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>

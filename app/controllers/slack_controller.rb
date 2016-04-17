@@ -121,6 +121,10 @@ class SlackController < ApplicationController
             if payment.save
               puts "payment saved"
               # make the api call to actually make the fucking payment
+              response = Visa::Funds.pull
+              if response["approvalCode"].present?
+                Visa::Funds.push
+              end
               # api call to make payment goes here
               # if payment succeeds, call method that tells both users
             else
@@ -193,6 +197,9 @@ class SlackController < ApplicationController
       SlackTeam.query_stuffs(slack_team.access_token, to_slack_username, text)
       render text: text
     else
+      
+      # actually make the fucking payment
+      
       payment = Payment.new(
         from_user_id: from_user.id, 
         to_user_id: to_user.first,
@@ -208,6 +215,7 @@ class SlackController < ApplicationController
         if response["approvalCode"].present?
           Visa::Funds.push
           p "pull response: #{response}"
+
           text = "Payment to #{to_slack_username} from @#{from_user.slack_username} is pending"
           SlackTeam.query_stuffs(slack_team.access_token, to_slack_username, text)
           SlackTeam.payment_succeeded_message(slack_team.access_token, to_slack_username, from_user.slack_username, amount)
