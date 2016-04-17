@@ -185,14 +185,14 @@ class SlackController < ApplicationController
         # actually make the fucking payment
         # visa api call goes here
         # call method to update both the users
+        text = "Payment to #{to_slack_username} from @#{from_user.slack_username} is pending"
+        SlackTeam.query_stuffs(slack_team.access_token, to_slack_username, text)
         SlackTeam.payment_succeeded_message(slack_team.access_token, to_slack_username, from_user.slack_username, amount)
       else
         p "payment didn't save"
       end
 
-      text = "Payment to #{to_slack_username} from @#{from_user.slack_username} is pending"
-      SlackTeam.query_stuffs(slack_team.access_token, to_slack_username, text)
-      render text: text
+      render text: "Success"
     end
   end
 end
