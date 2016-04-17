@@ -13,7 +13,7 @@ class SlackController < ApplicationController
     parsed_body = JSON.parse(response.body)
     p "parsed_body: #{parsed_body}"
 
-    if parsed_body['ok']
+    
       slack_team = SlackTeam.new(
         ok: parsed_body['ok'], 
         access_token: parsed_body['access_token'],
@@ -36,7 +36,7 @@ class SlackController < ApplicationController
       end
 
       p slack_team
-    end
+
     # {"ok"=>true, "access_token"=>"xoxp-4592131850-4592131860-35296188357-5ae4f8cc33", 
     # "scope"=>"identify,bot,commands,incoming-webhook", "user_id"=>"U04HE3VRA", "team_name"=>"Miami Tech", 
     #"team_id"=>"T04HE3VR0", "incoming_webhook"=>{"channel"=>"#emerge", "channel_id"=>"C118AHJ6Q", 
