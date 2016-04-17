@@ -67,10 +67,11 @@ class SlackController < ApplicationController
     p "from user cards: #{from_user.cards}"
 
     to_slack_username = text.split(' ')[0]
+    p "to_slack_username: #{to_slack_username}"
     amount = text.split(' ')[1]
 
     to_user = slack_team.users.where(
-      slack_username: to_slack_username,
+      slack_username: to_slack_username.gsub('@', ''),
       slack_team_id: slack_team.id
     )    
 
@@ -120,6 +121,8 @@ class SlackController < ApplicationController
             if payment.save
               puts "payment saved"
               # make the api call to actually make the fucking payment
+              # api call to make payment goes here
+              # if payment succeeds, call method that tells both users
             else
               puts "payment didn't save"
             end
@@ -131,7 +134,8 @@ class SlackController < ApplicationController
 
       SlackTeam.query_stuffs(slack_team.access_token, params[:user_name], text)
       render text: text
-
+    elsif text.split(' ')[0] == "@all"
+      # return all of the payments for that user
     elsif from_user.cards.count == 0
       text = "Setup your account by entering /visapay @setup CC# expiration csv"
       SlackTeam.query_stuffs(slack_team.access_token, params[:user_name], text)
@@ -160,15 +164,19 @@ class SlackController < ApplicationController
         from_user_id: from_user.id, 
         to_user_id: to_user.first,
         from_card_id: from_user.cards.last.id,
-        to_card_id: to_user.cards.last.id,
+        to_card_id: to_user.last.cards.last.id,
         to_username: to_slack_username,
         amount: amount
       )
 
       if payment.save
         p "we saved a payment"
+
+
         # actually make the fucking payment
-        # api call goes here
+        # visa api call goes here
+        # call method to update both the users
+        SlackTeam.payment_succeeded_message(slack_team.access_token, to_slack_username, from_user.slack_username, amount)
       else
         p "payment didn't save"
       end
