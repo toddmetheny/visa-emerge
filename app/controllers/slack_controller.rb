@@ -115,16 +115,18 @@ class SlackController < ApplicationController
       render text: text
 
     elsif text.split(' ')[0] == "@create_event"
-
       create_event = Event.new(user_id: from_user.id)
       text.split('|')[1] = create_event.description
       text.split('|')[2] = create_event.amount_owed
       text.split('|')[3] = create_event.payment_to
       create_event.save
-      # event = Event.new(amount_owed: amount_owed, payment_to: payment_to, description: description)
-# text = "xxx"
-# from_user.slack_username, text
-# render text: text
+    elsif text.split(' ')[0] == "@help"
+      help_text = ""
+      help_text << "View all transactions: /visapay @all \n"
+      help_text << "View all outbound transactions: /visapay @paid_to \n"
+      help_text << "View all inbound transactions: /visapay @received \n"
+      help_text << "To create event: /visapay @create_event | description | amount | @user (to pay) \n"
+      render text: help_text
    
     elsif text.split(' ')[0] == "@received" # see only received
       text = SlackTeam.received_payments(from_user.id)
