@@ -114,12 +114,6 @@ class SlackController < ApplicationController
       SlackTeam.query_stuffs(slack_team.access_token, from_user.slack_username, text)
       render text: text
 
-    elsif text.split(' ')[0] == "@create_event"
-      create_event = Event.new(user_id: from_user.id)
-      text.split('|')[1] = create_event.description
-      text.split('|')[2] = create_event.amount_owed
-      text.split('|')[3] = create_event.payment_to
-      create_event.save
     elsif text.split(' ')[0] == "@help"
       help_text = ""
       help_text << "View all transactions: /visapay @all \n"
@@ -128,6 +122,18 @@ class SlackController < ApplicationController
       help_text << "To create event: /visapay @create_event | description | amount | @user (to pay) \n"
       render text: help_text
    
+    elsif text.split(' ')[0] == "@create_event"
+      event = Event.new(
+        user_id: from_user.id,
+        description: text.split('|')[1],
+        amount_owed: text.split('|')[2],
+        payment_to: text.split('|')[3]
+      )
+
+      text = event.save ? "event saved" : "event didn't save"
+      
+      SlackTeam.query_stuffs(slack_team.access_token, from_user.slack_username, text)
+      render text: text
     elsif text.split(' ')[0] == "@received" # see only received
       text = SlackTeam.received_payments(from_user.id)
       SlackTeam.query_stuffs(slack_team.access_token, from_user.slack_username, text)

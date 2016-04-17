@@ -4,17 +4,21 @@ source 'https://rubygems.org'
 gem 'rails', '4.2.5'
 
 gem 'rails-api'
-gem 'sqlite3'
 gem 'httparty'
 gem 'dotenv-rails', :groups => [:development, :test]
 
 gem 'rest-client'
 gem 'wit'
 group :development do
+  gem 'sqlite3'
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'spring'
   gem 'pry'
+end
+
+group :production do
+  gem 'pg'
 end
 
 gem 'slack-api'

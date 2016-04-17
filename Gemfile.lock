@@ -82,6 +82,7 @@ GEM
     multipart-post (2.0.0)
     nokogiri (1.6.7.2)
       mini_portile2 (~> 2.0.0.rc2)
+    pg (0.18.3)
     pry (0.10.3)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -153,6 +154,7 @@ DEPENDENCIES
   binding_of_caller
   dotenv-rails
   httparty
+  pg
   pry
   rails (= 4.2.5)
   rails-api
