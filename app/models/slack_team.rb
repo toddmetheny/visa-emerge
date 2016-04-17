@@ -63,4 +63,37 @@ class SlackTeam < ActiveRecord::Base
     puts response.body
   end
 
+  def self.received_payments(user_id)
+    text = ""
+    payments_to = Payment.where(to_user_id: user_id)
+    if payments_to.blank?
+      text << "You haven't received any payments \n"
+    else
+      payments_to.each do |payment|
+        other_user = User.select(:id, :slack_username).where(id: payment.from_user_id)
+        unless other_user.blank?
+          text << "You received #{payment.amount} from #{other_user.last.slack_username} on #{payment.created_at.strftime('%m-%d-%Y')} \n"
+        end
+      end
+    end
+    text
+  end
+
+  def self.paid_history(user_id)
+    text = ""
+    payments_from = Payment.where(from_user_id: user_id)
+
+    if payments_from.blank?
+      text << "You haven't sent any payments"
+    else
+      payments_from.each do |payment|
+        other_user = User.select(:id, :slack_username).where(id: payment.to_user_id)
+        unless other_user.blank?
+          text << "You sent @#{other_user.last.slack_username} #{payment.amount} on #{payment.created_at.strftime('%m-%d-%Y')} \n"
+        end
+      end
+    end
+    text
+  end
+
 end
