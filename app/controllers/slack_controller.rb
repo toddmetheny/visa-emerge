@@ -147,12 +147,10 @@ class SlackController < ApplicationController
       SlackTeam.query_stuffs(slack_team.access_token, from_user.slack_username, text)
       render text: text
     elsif text.split(' ')[0] == "@received"
-      p "inside received"
       text = SlackTeam.received_payments(from_user.id)
       SlackTeam.query_stuffs(slack_team.access_token, from_user.slack_username, text)
       render text: text
     elsif text.split(' ')[0] == "@paid"
-      p "inside paid"
       text = SlackTeam.paid_history(from_user.id)
       SlackTeam.query_stuffs(slack_team.access_token, from_user.slack_username, text)
       render text: text
