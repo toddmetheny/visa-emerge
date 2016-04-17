@@ -136,6 +136,39 @@ class SlackController < ApplicationController
       render text: text
     elsif text.split(' ')[0] == "@all"
       # return all of the payments for that user
+      text = ""
+      payments_from = Payment.where(from_user_id: from_user.id)
+      # if payments_from.to_a.count > 0
+      if payments_from.blank?
+        text << "You haven't sent any payments"
+      else
+        payments_from.each do |payment|
+          other_user = User.select(:id, :slack_username).where(id: payment.to_user_id)
+          unless other_user.blank?
+            text << "You sent @#{other_user.last.slack_username} #{payment.amount} on #{payment.created_at.strftime('%m-%d-%Y')} \n"
+          end
+        end
+      end
+
+      payments_to = Payment.where(to_user_id: from_user.id)
+      if payments_to.blank?
+        text << "You haven't received any payments \n"
+      else
+        payments_to.each do |payment|
+          other_user = User.select(:id, :slack_username).where(id: payment.from_user_id)
+          unless other_user.blank?
+            text << "You received #{payment.amount} from #{other_user.last.slack_username} on #{payment.created_at.strftime('%m-%d-%Y')} \n"
+          end
+        end
+      end
+      # else
+      #   text << "You haven't sent any payments"
+      # end
+      p "#{'!'*20}"
+      p "text: #{text}"
+      p "#{'!'*20}"
+      SlackTeam.query_stuffs(slack_team.access_token, from_user.slack_username, text)
+      render text: text
     elsif from_user.cards.count == 0
       text = "Setup your account by entering /visapay @setup CC# expiration csv"
       SlackTeam.query_stuffs(slack_team.access_token, params[:user_name], text)
