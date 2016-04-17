@@ -124,6 +124,7 @@ class SlackController < ApplicationController
               response = Visa::Funds.pull
               if response["approvalCode"].present?
                 Visa::Funds.push
+              end
               # api call to make payment goes here
               # if payment succeeds, call method that tells both users
             else
@@ -181,7 +182,7 @@ class SlackController < ApplicationController
         if response["approvalCode"].present?
           Visa::Funds.push
           p "pull response: #{response}"
-
+        end
         # actually make the fucking payment
         # visa api call goes here
         # call method to update both the users
