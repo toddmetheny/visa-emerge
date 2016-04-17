@@ -136,47 +136,49 @@ class SlackController < ApplicationController
       render text: text
 
     elsif from_user.cards.count == 0
-      # move all these queries to methods and pass data as args
-      # ["id", "from_user_id", "from_card_id", "to_user_id", "to_card_id", "amount", "status", "created_at", "updated_at"]
-      # payment = Payment.new(from_card_id: card.id)
-
-      # payment = Payment.new(from_user_id: from_user.id)
       text = "Setup your account by entering /visapay @setup CC# expiration csv"
       SlackTeam.query_stuffs(slack_team.access_token, params[:user_name], text)
       render text: text
     elsif no_user
-      # create the to_user
-      # create_to_user = User.new(slack_username: to_slack_username, slack_team_id: slack_team.id)
-      # if create_to_user.save
-      # create_to_user = User.new(slack_username: to_slack_username, slack_team_id: slack_team.id)
       from_card_id = from_user.cards.last.id
-      # create the payment
-      # if create_to_user.save
-        user = User.where(slack_username: to_slack_username, slack_team_id: slack_team.id)
-        payment = Payment.new(
-          from_user_id: from_user.id, 
-          # to_user_id: user.last.id,
-          to_username: to_slack_username,
-          from_card_id: from_card_id,
-          amount: amount
-        )
-        if payment.save
-          p "payment saved: #{payment.inspect}"
-        else
-          p "payment didn't save"
-        end
-      # end
-      # else
-      #   p "didn't save"
-      # end
+      
+      user = User.where(slack_username: to_slack_username, slack_team_id: slack_team.id)
+      payment = Payment.new(
+        from_user_id: from_user.id,
+        to_username: to_slack_username,
+        from_card_id: from_card_id,
+        amount: amount
+      )
+      if payment.save
+        p "payment saved: #{payment.inspect}"
+      else
+        p "payment didn't save"
+      end
 
-      text = "Hey dude! @#{from_user.slack_username} wants to send you money. 
-      Setup your account by entering /visapay @setup CC# expiration csv"
+      text = "Hey dude! @#{from_user.slack_username} wants to send you money. Setup your account by entering /visapay @setup CC# expiration csv(123)."
       SlackTeam.query_stuffs(slack_team.access_token, to_slack_username, text)
       render text: text
     else
+      
       # actually make the fucking payment
       
+      payment = Payment.new(
+        from_user_id: from_user.id, 
+        to_user_id: to_user.first,
+        from_card_id: from_user.cards.last.id,
+        to_card_id: to_user.cards.last.id,
+        to_username: to_slack_username,
+        amount: amount
+      )
+
+      if payment.save
+        p "we saved a payment"
+        # actually make the fucking payment
+        # api call goes here
+      else
+        p "payment didn't save"
+      end
+
       text = "Payment to #{to_slack_username} from @#{from_user.slack_username} is pending"
       SlackTeam.query_stuffs(slack_team.access_token, to_slack_username, text)
       render text: text
