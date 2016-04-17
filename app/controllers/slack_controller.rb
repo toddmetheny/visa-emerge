@@ -45,6 +45,7 @@ class SlackController < ApplicationController
 
   def command
     text = params[:text]
+    p "text split: #{text.split(' ')[0]}"
     slack_team = SlackTeam.find_by(team_id: params[:team_id])
 
     from_user = slack_team.users.where(
@@ -114,6 +115,7 @@ class SlackController < ApplicationController
       render text: text
 
     elsif text.split(' ')[0] == "@create_event"
+
       create_event = Event.new(user_id: from_user.id)
       text.split('|')[1] = create_event.description
       text.split('|')[2] = create_event.amount_owed
