@@ -73,8 +73,9 @@ module Visa
       url = 'https://sandbox.api.visa.com/visadirect/' + resource_path
       headers = {'content-type'=> 'application/json', 'accept'=> 'application/json'}
 
-      key_path = '/Users/gilchrist/Desktop/key_sean-pay.pem'
-      cert_path = '/Users/gilchrist/Desktop/cert.pem'
+      key_path = 'key_sean-pay.pem'
+      cert_path = 'cert.pem'
+
       user_id = 'YSR97TUDQZBUB286402521ulzFoygLwaUTKr4hPwuDc3OnLVg'
       password = 'n00lA6APZQe9Z5'
 
@@ -147,8 +148,9 @@ module Visa
       url = 'https://sandbox.api.visa.com/visadirect/' + resource_path
       headers = {'content-type'=> 'application/json', 'accept'=> 'application/json'}
 
-      key_path = '/Users/gilchrist/Desktop/key_sean-pay.pem'
-      cert_path = '/Users/gilchrist/Desktop/cert.pem'
+      key_path = 'key_sean-pay.pem'
+      cert_path = 'cert.pem'
+
       user_id = 'YSR97TUDQZBUB286402521ulzFoygLwaUTKr4hPwuDc3OnLVg'
       password = 'n00lA6APZQe9Z5'
 
