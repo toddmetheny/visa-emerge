@@ -28,8 +28,8 @@ class SlackTeam < ActiveRecord::Base
   end
 
   def self.payment_succeeded_message(token, to_user_name, from_user_name, amount)
-    text_to = "#{from_user_name} sent you $#{amount}!"
-    text_from = "You send #{to_user_name} $#{amount}"
+    text_to = "@#{from_user_name} sent you $#{amount}!"
+    text_from = "You sent #{to_user_name} $#{amount}"
     query_to = {
       token: token,
       channel: to_user_name,
