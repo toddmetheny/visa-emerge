@@ -141,36 +141,19 @@ class SlackController < ApplicationController
     elsif text.split(' ')[0] == "@all"
       # return all of the payments for that user
       text = ""
-      payments_from = Payment.where(from_user_id: from_user.id)
-      # if payments_from.to_a.count > 0
-      if payments_from.blank?
-        text << "You haven't sent any payments"
-      else
-        payments_from.each do |payment|
-          other_user = User.select(:id, :slack_username).where(id: payment.to_user_id)
-          unless other_user.blank?
-            text << "You sent @#{other_user.last.slack_username} #{payment.amount} on #{payment.created_at.strftime('%m-%d-%Y')} \n"
-          end
-        end
-      end
-
-      payments_to = Payment.where(to_user_id: from_user.id)
-      if payments_to.blank?
-        text << "You haven't received any payments \n"
-      else
-        payments_to.each do |payment|
-          other_user = User.select(:id, :slack_username).where(id: payment.from_user_id)
-          unless other_user.blank?
-            text << "You received #{payment.amount} from #{other_user.last.slack_username} on #{payment.created_at.strftime('%m-%d-%Y')} \n"
-          end
-        end
-      end
-      # else
-      #   text << "You haven't sent any payments"
-      # end
-      p "#{'!'*20}"
-      p "text: #{text}"
-      p "#{'!'*20}"
+      text << SlackTeam.paid_history(from_user.id)
+      text << SlackTeam.received_payments(from_user.id)
+      
+      SlackTeam.query_stuffs(slack_team.access_token, from_user.slack_username, text)
+      render text: text
+    elsif text.split(' ')[0] == "@received"
+      p "inside received"
+      text = SlackTeam.received_payments(from_user.id)
+      SlackTeam.query_stuffs(slack_team.access_token, from_user.slack_username, text)
+      render text: text
+    elsif text.split(' ')[0] == "@paid"
+      p "inside paid"
+      text = SlackTeam.paid_history(from_user.id)
       SlackTeam.query_stuffs(slack_team.access_token, from_user.slack_username, text)
       render text: text
     elsif from_user.cards.count == 0
@@ -193,16 +176,15 @@ class SlackController < ApplicationController
         p "payment didn't save"
       end
 
-      text = "Hey dude! @#{from_user.slack_username} wants to send you money. Setup your account by entering /visapay @setup CC# expiration csv(123)."
+      text = "Yo! @#{from_user.slack_username} wants to send you money. Setup your account by entering /visapay @setup CC# expiration csv(123)."
       SlackTeam.query_stuffs(slack_team.access_token, to_slack_username, text)
       render text: text
     else
-      
       # actually make the fucking payment
-      
+      p "to_user.last.cards.last.id: #{to_user.last.cards.last.id}"
       payment = Payment.new(
         from_user_id: from_user.id, 
-        to_user_id: to_user.first,
+        to_user_id: to_user.first.id,
         from_card_id: from_user.cards.last.id,
         to_card_id: to_user.last.cards.last.id,
         to_username: to_slack_username,
@@ -226,10 +208,6 @@ class SlackController < ApplicationController
           p "#{'!'*20}"
           text_2 = "failure"
         end
-
-        # actually make the fucking payment
-        # visa api call goes here
-        # call method to update both the users
       else
         p "payment didn't save"
         text_2 = "Failure"
