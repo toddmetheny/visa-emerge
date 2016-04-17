@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -9,333 +8,57 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
-
     <title>VisaPay Bot</title>
-
     <!-- Bootstrap core CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-    <link href='https://fonts.googleapis.com/css?family=Roboto:400,500,700' rel='stylesheet' type='text/css'>
-
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,900' rel='stylesheet' type='text/css'>
     <!-- Custom styles for this template -->
     <style>
-      body, html {
-       background-color: #9C27B0;
-       color: white;
-      }
-      /* Space out content a bit */
       body {
-        padding-top: 20px;
-        padding-bottom: 20px;
+        font-family: 'Lato', sans-serif;
+        /*color: #fff;*/
       }
-
-      /* Everything but the jumbotron gets side spacing for mobile first views */
-      .header,
-      .marketing,
-      .footer {
-        padding-right: 15px;
-        padding-left: 15px;
-      }
-
-      /* Custom page header */
-      .header {
-        padding-bottom: 20px;
-        border-bottom: 1px solid #e5e5e5;
-      }
-      /* Make the masthead heading the same height as the navigation */
-      .header h3 {
-        margin-top: 0;
-        margin-bottom: 0;
-        line-height: 40px;
-      }
-
-      /* Custom page footer */
-      .footer {
-        padding-top: 19px;
-        color: #777;
-        border-top: 1px solid #e5e5e5;
-      }
-
-      .container {
-        padding-top: 8rem;
-        text-align: center;
-      }
-
-      h1, p {
-        font-family: 'Roboto', sans-serif;
-        font-weight: 400;
+      h1 {
+        font-weight: 900;
+        font-size: 80px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
         padding-bottom: 1rem;
       }
-
-      h1 {
-        font-size: 80px;
+      p {
+        letter-spacing: 1px;
       }
-
-        .credit-card {
-          transform-style: preserve-3d;
-          animation: flip 3.4s infinite linear;
-          padding-bottom: 4rem;
+      .background-image {
+        /*background: url('piggybank.jpeg') no-repeat center center;*/
+        background: url('piggybank.jpg') no-repeat center center;
+        background-size: cover;
+        height: 700px;
+      }
+      .container {
+        padding-top: 225px;
+        text-align: center;
+      }
+      @media only screen and (max-width: 500px) {
+        .container {
+          padding-top: 50px;
         }
-
-        @keyframes flip {
-          from {
-            transform: rotateY(0deg);
-          }
-          to {
-            transform: rotateY(360deg);
-          }
+      }
+      @media only screen and (max-width: 768px) {
+        .container {
+          padding-top: 50px;
         }
-        .front, .back {
-          position: absolute;
-          top: calc(50% - 30px);
-          left: calc(50% - 50px);
-          display: block;
-          width: 100px;
-          height: 60px;
-          border-radius: 5px;
-          backface-visibility: hidden;
-          background: #663554;
-        }
-
-        /**********************
-
-        FRONT OF CARD
-
-        **********************/
-        .front {
-          transform: translate3d(0, 0, 0);
-        }
-
-        .box {
-          position: absolute;
-          top: 10px;
-          left: 6px;
-          display: block;
-          width: 19px;
-          height: 15px;
-          border-radius: 2px;
-          background: #ffd58c;
-          transform-origin: 0;
-          transform: scaleX(0);
-        }
-        .box:after {
-          content: '';
-          display: block;
-          width: 1px;
-          height: 1px;
-          box-shadow: 9px 0 #663554, 9px 1px #663554, 9px 2px #663554, 0 3px #663554, 1px 3px #663554, 2px 3px #663554, 3px 3px #663554, 4px 3px #663554, 5px 3px #663554, 6px 3px #663554, 7px 3px #663554, 8px 3px #663554, 9px 3px #663554, 4px 4px #663554, 4px 5px #663554, 4px 6px #663554, 13px 0 #663554, 13px 1px #663554, 13px 2px #663554, 13px 3px #663554, 13px 4px #663554, 13px 5px #663554, 13px 6px #663554, 13px 7px #663554, 14px 7px #663554, 15px 7px #663554, 16px 7px #663554, 17px 7px #663554, 18px 7px #663554, 0 7px #663554, 1px 7px #663554, 2px 7px #663554, 3px 7px #663554, 4px 7px #663554, 5px 7px #663554, 6px 7px #663554, 7px 7px #663554, 8px 7px #663554, 9px 7px #663554, 9px 8px #663554, 9px 9px #663554, 9px 10px #663554, 9px 11px #663554, 9px 12px #663554, 9px 13px #663554, 9px 14px #663554, 9px 15px #663554, 18px 11px #663554, 17px 11px #663554, 16px 11px #663554, 15px 11px #663554, 14px 11px #663554, 13px 11px #663554, 12px 11px #663554, 11px 11px #663554, 10px 11px #663554, 9px 11px #663554, 8px 11px #663554, 7px 11px #663554, 6px 11px #663554, 5px 11px #663554, 4px 11px #663554, 4px 12px #663554, 4px 13px #663554, 4px 14px #663554, 4px 15px #663554;
-        }
-
-        @keyframes scaleBox {
-          from {
-            transform: scaleX(0);
-          }
-          to {
-            transform: scaleX(1);
-          }
-        }
-        .logo, .logo:before, .logo:after {
-          position: absolute;
-          top: 10px;
-          right: 6px;
-          display: block;
-          width: 17px;
-          height: 17px;
-          border-radius: 50%;
-        }
-        .logo:before {
-          content: '';
-          top: 0;
-          right: 8px;
-          background: #b38570;
-          transform: scale(0);
-        }
-        .logo:after {
-          content: '';
-          top: 0;
-          right: 10px;
-          background: #ffd58c;
-          transform: scale(0);
-        }
-
-        @keyframes scaleLogo {
-          0% {
-            transform: scale(0);
-          }
-          50% {
-            transform: scale(1.1);
-          }
-          100% {
-            transform: scale(1);
-          }
-        }
-        @keyframes scaleLogo2 {
-          0% {
-            transform: scale(0) translate(0);
-          }
-          50% {
-            transform: scale(1.1) translate(5px);
-          }
-          100% {
-            transform: scale(1) translate(8px);
-          }
-        }
-        .number {
-          position: absolute;
-          bottom: 12px;
-          right: 6px;
-          font-size: 8px;
-          color: #ffd58c;
-        }
-        .number:after {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -2px;
-          display: block;
-          width: 94px;
-          height: 9px;
-          background: #663554;
-          transform-origin: 94px;
-          transform: scaleX(1);
-        }
-
-        @keyframes scaleNumber {
-          from {
-            transform: skew(30deg) scaleX(1);
-          }
-          to {
-            transform: skew(30deg) scaleX(0);
-          }
-        }
-        /**********************
-
-        BACK OF CARD
-
-        **********************/
-        .back {
-          transform: rotateY(180deg) translate3d(0, 0, 0);
-        }
-
-        .scan {
-          position: absolute;
-          top: 10px;
-          display: block;
-          width: 100px;
-          height: 13px;
-          overflow: hidden;
-          background: #000;
-          transform-origin: 0;
-          transform: scale(0);
-        }
-        .scan:after {
-          content: '';
-          display: block;
-          width: 5px;
-          height: 100%;
-          background: #6d5e46;
-          box-shadow: 10px 0 #6d5e46, 14px 0 #6d5e46, 25px 0 #6d5e46;
-          transform: skewX(-40deg) translate(110px);
-        }
-
-        @keyframes highlight {
-          from {
-            transform: skewX(-40deg) translate(-35px);
-          }
-          to {
-            transform: skewX(-40deg) translate(110px);
-          }
-        }
-        .info, .info:after {
-          position: absolute;
-          left: 6px;
-          bottom: 16px;
-          display: block;
-          width: 38px;
-          height: 10px;
-          background: #ffd58c;
-          transform-origin: 0;
-          transform: scale(0);
-        }
-        .info:after {
-          content: '';
-          top: 0;
-          left: 44px;
-          width: 16px;
-        }
-
-        .animate .box {
-          animation: scaleBox 0.48571s forwards;
-        }
-        .animate .logo:before {
-          animation: scaleLogo2 0.48571s 0.15s forwards;
-        }
-        .animate .logo:after {
-          animation: scaleLogo 0.48571s forwards;
-        }
-        .animate .number:after {
-          animation: scaleNumber 1s forwards;
-        }
-        .animate .scan {
-          animation: scaleBox .5s forwards;
-        }
-        .animate .scan:after {
-          animation: highlight 1.75s forwards;
-        }
-        .animate .info, .animate .info:after {
-          animation: scaleBox 1s forwards;
-        }
-        .animate .info:after {
-          animation: scaleBox 1s .6s forwards;
-        }
-
-
+      }
     </style>
-
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
-<!--     <script>
-    function toggleClasses() {
-      $('.front').toggleClass('animate');
-      $('.back').toggleClass('animate');
-    }
-
-      setTimeout(function() {
-        toggleClasses();
-        setInterval(function() {
-          toggleClasses();
-        }, 3400/2);
-      }, 3400/4);
-    </script> -->
   </head>
-
   <body>
-
-    <div class="container">
-    <div class="credit-card">
-      <div class="front animate">
-        <i class="box"></i>
-        <i class="logo"></i>
-        <span class="number">0000 0000 0000 0000</span>
-      </div>
-      <div class="back">
-        <i class="scan"></i>
-        <i class="info"></i>
+    <div class="background-image">
+      <div class="container col-md-6">
+        <h1>Visa Pay</h1>
+        <p class="">Send and receive payments through Slack!</p>
+        <p>
+          <a href="/slack/authorize"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>
+        </p>
       </div>
     </div>
-      <h1>VisaPay</h1>
-      <p class="">Send and receive payments through Slack!</p>
-      <p>
-        <a href="/slack/authorize"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>
-      <!-- <a class="btn btn-lg btn-success" href="#" role="button">Sign up today</a> -->
-      </p>
-    </div>
-
-
   </body>
 </html>
