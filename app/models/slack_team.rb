@@ -34,7 +34,7 @@ class SlackTeam < ActiveRecord::Base
       token: token,
       channel: to_user_name,
       text: text_to,
-      username: 'visapay',
+      username: 'VisaPay',
       as_user: false
     }.to_query
 
@@ -42,7 +42,7 @@ class SlackTeam < ActiveRecord::Base
       token: token,
       channel: from_user_name,
       text: text_from,
-      username: 'visapay',
+      username: 'VisaPay',
       as_user: false
     }.to_query
     message_for_to_user = HTTParty.get("https://slack.com/api/chat.postMessage?#{query_to}")
@@ -54,7 +54,7 @@ class SlackTeam < ActiveRecord::Base
       token: token,
       channel: channel,
       text: text,
-      username: 'visapay',
+      username: 'VisaPay',
       as_user: false
     }.to_query
 
