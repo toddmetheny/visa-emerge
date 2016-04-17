@@ -120,6 +120,9 @@ class SlackController < ApplicationController
             if payment.save
               puts "payment saved"
               # make the api call to actually make the fucking payment
+              response = Visa::Funds.pull
+              if response["approvalCode"].present?
+                Visa::Funds.push
             else
               puts "payment didn't save"
             end
@@ -173,6 +176,7 @@ class SlackController < ApplicationController
       render text: text
     else
       # actually make the fucking payment
+      
       text = "Payment to #{to_slack_username} from @#{from_user.slack_username} is pending"
       SlackTeam.query_stuffs(slack_team.access_token, to_slack_username, text)
       render text: text

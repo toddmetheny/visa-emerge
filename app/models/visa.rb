@@ -10,6 +10,8 @@ module Visa
 
     def self.create_pull_body(params)
 
+      p "params: #{params.inspect}"
+
       # TODO figure out
       systemsTraceAuditNumber = 300259
       acquiringBin = 409999
@@ -71,10 +73,10 @@ module Visa
       url = 'https://sandbox.api.visa.com/visadirect/' + resource_path
       headers = {'content-type'=> 'application/json', 'accept'=> 'application/json'}
 
-      key_path = '/Users/josecasanova/Documents/programming/personal/key_visa-emerge-2.pem'
-      cert_path = '/Users/josecasanova/Documents/programming/personal/cert2.pem'
-      user_id = 'W3PGA6DZ3XLODFJ912UR21063doIwQtfQIy90q4W9aNgdyUIE'
-      password = '01Zm9KxdtSBokVqXgVYLepqY6B0'
+      key_path = '/Users/gilchrist/Desktop/key_sean-pay.pem'
+      cert_path = '/Users/gilchrist/Desktop/cert.pem'
+      user_id = 'YSR97TUDQZBUB286402521ulzFoygLwaUTKr4hPwuDc3OnLVg'
+      password = 'n00lA6APZQe9Z5'
 
       begin
         response = RestClient::Request.execute(
@@ -145,10 +147,10 @@ module Visa
       url = 'https://sandbox.api.visa.com/visadirect/' + resource_path
       headers = {'content-type'=> 'application/json', 'accept'=> 'application/json'}
 
-      key_path = '/Users/josecasanova/Documents/programming/personal/key_visa-emerge-2.pem'
-      cert_path = '/Users/josecasanova/Documents/programming/personal/cert2.pem'
-      user_id = 'W3PGA6DZ3XLODFJ912UR21063doIwQtfQIy90q4W9aNgdyUIE'
-      password = '01Zm9KxdtSBokVqXgVYLepqY6B0'
+      key_path = '/Users/gilchrist/Desktop/key_sean-pay.pem'
+      cert_path = '/Users/gilchrist/Desktop/cert.pem'
+      user_id = 'YSR97TUDQZBUB286402521ulzFoygLwaUTKr4hPwuDc3OnLVg'
+      password = 'n00lA6APZQe9Z5'
 
       begin
         response = RestClient::Request.execute(
