@@ -16,8 +16,8 @@ class SlackTeam < ActiveRecord::Base
   has_many :users
 
   # validates_presence_of :access_token, :scope, :slack_user_id, 
-  #   :team_id, :channel, :channel_id, :configuration_url, :url, 
-  #   :bot_user_id, :bot_access_token
+  # :team_id, :channel, :channel_id, :configuration_url, :url, 
+  # :bot_user_id, :bot_access_token
 
   # validate :successfully_authenticated
 
@@ -27,16 +27,18 @@ class SlackTeam < ActiveRecord::Base
     end
   end
 
-  def self.query_stuffs
+  def self.query_stuffs(token, channel, text)
     query = {
-      token: slack_team.access_token,
-      channel: to_slack_username,
-      text: "Hey dude! Someone wants to send you money :D",
+      token: token,
+      channel: channel,
+      text: text,
       username: 'visapay',
-      as_user: true
+      as_user: false
     }.to_query
 
     response = HTTParty.get("https://slack.com/api/chat.postMessage?#{query}")
+
+    puts response.body
   end
 
 end

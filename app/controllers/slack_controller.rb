@@ -1,7 +1,7 @@
 class SlackController < ApplicationController
 
   def authorize
-    redirect_to "https://slack.com/oauth/authorize?scope=identify,bot,incoming-webhook&client_id=3110874209.35282360436&redirect_uri=#{ENV['SLACK_REDIRECT_URI']}"
+    redirect_to "https://slack.com/oauth/authorize?scope=identify,bot,incoming-webhook,commands,chat:write:user,chat:write:bot&client_id=3110874209.35282360436&redirect_uri=#{ENV['SLACK_REDIRECT_URI']}"
   end
 
   def redirect_uri
@@ -33,47 +33,6 @@ class SlackController < ApplicationController
     else
       p "What we have here is...failure to authenticate."
     end
-    
-    # payload
-
-    # messages = Queue.new # this is like redis or zero-mq, but it's dead simple.
-    #                        # See also: http://ruby-doc.org/core-2.1.5/Queue.html
-
-    # # slack client thread, which will only forwards messages to the other
-    # # thread
-
-
-    # # first_url = SlackRTM.get_url(token: slack_team.access_token) # get one on https://api.slack.com/web#basics
-    # # puts first_url.inspect
-    
-    # # second_url = SlackRTM.get_url token: slack_team.bot_access_token # get one on https://api.slack.com/web#basics
-    # # puts second_url.inspect
-
-    # url = JSON.parse(HTTParty.post("https://slack.com/api/rtm.start?token=#{slack_team.access_token}").body)['url']
-    # puts url.inspect
-
-    # t = Thread.new do
-
-    #   client = SlackRTM::Client.new websocket_url: URI(url)
-    #   client.on(:message) do |data|
-    #     if data['type'] == 'message'
-    #       messages << data
-    #     end
-    #   end
-    #   client.main_loop # be careful, this never returns. That's why you need to thread.
-    # end
-    # t.abort_on_exception = true # will notify us if an exception happens
-
-    # t = Thread.new do
-    #   loop do
-    #     msg = messages.pop
-    #     # do something with the slack message. Like storing in db, if you want to log
-    #     puts msg.class # => Hash
-    #     p msg     # => {type: 'message', user: 'U13131', channel: 'C121212', text: 'Hello world !'}
-    #               # see also: https://api.slack.com/events/message
-    #   end
-    # end
-    # t.abort_on_exception = true # will notify us if an exception happens
 
     p slack_team
     # {"ok"=>true, "access_token"=>"xoxp-4592131850-4592131860-35296188357-5ae4f8cc33", 
@@ -84,51 +43,17 @@ class SlackController < ApplicationController
     render text: 'Success'
   end
 
-
-    # "team_id"=>"T04HE3VR0", 
-    # "team_domain"=>"miamitech", 
-    # "channel_id"=>"D04HE3W1G", 
-    # "channel_name"=>"directmessage", 
-    # "user_id"=>"U04HE3VRA", 
-    # "user_name"=>"alain", 
-    # "command"=>"/visapay", 
-    # "text"=>"testing hahaha"
+  # "team_id"=>"T04HE3VR0", 
+  # "team_domain"=>"miamitech", 
+  # "channel_id"=>"D04HE3W1G", 
+  # "channel_name"=>"directmessage", 
+  # "user_id"=>"U04HE3VRA", 
+  # "user_name"=>"alain", 
+  # "command"=>"/visapay", 
+  # "text"=>"testing hahaha"
   def command
     text = params[:text]
-
     slack_team = SlackTeam.find_by(team_id: params[:team_id])
-
-    if not text.split(' ')[0].include?('@')
-      render text: "Please use the format: /visapay @user $X"
-      return
-    elsif text.split(' ')[0] == "@setup"
-      p "text: #{text.split(' ')}"
-      cc_info = text.split(' ')
-      Card.new(
-        user_id: params[:user_id],
-        card_number: cc_info[1],
-        expiration: cc_info[2],
-        csv: cc_info[3]
-      )
-      # p text.split(' ')[]
-
-      # method call that runs query, creates card from response, 
-      # and then returns success message to user
-
-      query = {
-        token: slack_team.access_token,
-        channel: params[:user_name],
-        text: "You successfully added a card",
-        username: 'visapay',
-        as_user: true
-      }.to_query
-
-      response = HTTParty.get("https://slack.com/api/chat.postMessage?#{query}")
-
-      render text: "You successfully added a card"
-      return 
-    end
-
 
     p "params: #{params.inspect}"
 
@@ -139,46 +64,117 @@ class SlackController < ApplicationController
       slack_username: params[:user_name]
     )
 
+    p "from user cards: #{from_user.cards}"
+
     to_slack_username = text.split(' ')[0]
+    amount = text.split(' ')[1]
 
     to_user = slack_team.users.where(
-      slack_username: to_slack_username
-    )
+      slack_username: to_slack_username,
+      slack_team_id: slack_team.id
+    )    
 
-    if from_user.cards.count == 0
-      # move all these queries to methods and pass data as args
-      query = {
-        token: slack_team.access_token,
-        channel: params[:user_name],
-        text: "Setup your account by entering /visapay @setup CC# expiration csv",
-        username: 'visapay',
-        as_user: true
-      }.to_query
-
-      response = HTTParty.get("https://slack.com/api/chat.postMessage?#{query}")
-
-      p response.body
-
-      render text: "Setup your account by entering /visapay @setup CC# csv expiration"
-
-    # elsif 
-
-    elsif to_user.count == 0
-
-      query = {
-        token: slack_team.access_token,
-        channel: to_slack_username,
-        text: "Hey dude! Someone wants to send you money :D",
-        username: 'visapay',
-        as_user: true
-      }.to_query
-
-      response = HTTParty.get("https://slack.com/api/chat.postMessage?#{query}")
-
-      render text: "SWEET"
+    if to_user.count == 0
+      no_user = true
+      
+    else
+      no_user = false
     end
 
+    if not text.split(' ')[0].include?('@')
+      render text: "Please use the format: /visapay @user $X"
+      return
+    elsif text.split(' ')[0] == "@setup"
+      # check for the existence of a to_payment_id
+      cc_info = text.split(' ')
 
+      user = User.find_by(slack_username: params[:user_name])
+
+      card = Card.new(
+        user_id: user.id,
+        card_number: cc_info[1],
+        expiration: cc_info[2],
+        csv: cc_info[3]
+      )
+
+      # method call that runs query, creates card from response, 
+      # and then returns success message to user
+      if card.save
+        text = "You successfully added a card."
+
+        # on setup we're looking for payments owed to the
+        # user who is setting up
+        p "from username: #{from_user.slack_username}"
+        owed = Payment.where(to_username: "@#{from_user.slack_username}")
+        p "owed: #{owed.inspect}"
+        if owed.count == 0
+          p "nothing owed"
+        else
+          p "#{from_user.slack_username} is owed some money"
+          p "payments: #{owed.count}"
+          owed.to_a.each do |payment|
+            p "inside payments owed loop"
+            payment.to_user_id = from_user.id
+            payment.to_card_id = card.id
+            payment.status = "pending"
+            if payment.save
+              puts "payment saved"
+            else
+              puts "payment didn't save"
+            end
+            # make the api call to actually make the fucking payment
+          end
+        end
+      else
+        text = "We weren't able to save your card."
+      end
+
+      SlackTeam.query_stuffs(slack_team.access_token, params[:user_name], text)
+      render text: text
+
+    elsif from_user.cards.count == 0
+      # move all these queries to methods and pass data as args
+      # ["id", "from_user_id", "from_card_id", "to_user_id", "to_card_id", "amount", "status", "created_at", "updated_at"]
+      # payment = Payment.new(from_card_id: card.id)
+
+      # payment = Payment.new(from_user_id: from_user.id)
+      text = "Setup your account by entering /visapay @setup CC# expiration csv"
+      SlackTeam.query_stuffs(slack_team.access_token, params[:user_name], text)
+      render text: text
+    elsif no_user
+      # create the to_user
+      # create_to_user = User.new(slack_username: to_slack_username, slack_team_id: slack_team.id)
+      # if create_to_user.save
+      # create_to_user = User.new(slack_username: to_slack_username, slack_team_id: slack_team.id)
+      from_card_id = from_user.cards.last.id
+      # create the payment
+      # if create_to_user.save
+        user = User.where(slack_username: to_slack_username, slack_team_id: slack_team.id)
+        payment = Payment.new(
+          from_user_id: from_user.id, 
+          # to_user_id: user.last.id,
+          to_username: to_slack_username,
+          from_card_id: from_card_id,
+          amount: amount
+        )
+        if payment.save
+          p "payment saved: #{payment.inspect}"
+        else
+          p "payment didn't save"
+        end
+      # end
+      # else
+      #   p "didn't save"
+      # end
+
+      text = "Hey dude! @#{from_user.slack_username} wants to send you money. 
+      Setup your account by entering /visapay @setup CC# expiration csv"
+      SlackTeam.query_stuffs(slack_team.access_token, to_slack_username, text)
+      render text: text
+    else
+      text = "Payment to #{to_slack_username} from @#{from_user.slack_username} is pending"
+      SlackTeam.query_stuffs(slack_team.access_token, to_slack_username, text)
+      render text: text
+    end
   end
-
 end

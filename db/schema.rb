@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160416183027) do
+ActiveRecord::Schema.define(version: 20160417011750) do
 
   create_table "cards", force: :cascade do |t|
     t.integer  "user_id"
@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 20160416183027) do
     t.string   "status"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
+    t.string   "to_username"
   end
 
   create_table "slack_teams", force: :cascade do |t|
