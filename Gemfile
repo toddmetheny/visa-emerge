@@ -17,6 +17,10 @@ group :development do
   gem 'pry'
 end
 
+group :production do
+  gem 'pg'
+end
+
 gem 'slack-api'
 gem 'slack-rtmapi'
 
