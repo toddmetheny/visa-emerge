@@ -1,4 +1,6 @@
 class Event < ActiveRecord::Base
+  # 3110874209.35282360436
+  # 69933a9e160d3c06da5f5276cedafe43
   has_many :invoices
 
   after_save :create_invoices

@@ -13,28 +13,30 @@ class SlackController < ApplicationController
     parsed_body = JSON.parse(response.body)
     p "parsed_body: #{parsed_body}"
 
-    slack_team = SlackTeam.new(
-      ok: parsed_body['ok'], 
-      access_token: parsed_body['access_token'],
-      scope: parsed_body['scope'], 
-      slack_user_id: parsed_body['user_id'],
-      team_name: parsed_body['team_name'], 
-      team_id: parsed_body['team_id'],
-      channel: parsed_body['incoming_webhook']['channel'], 
-      channel_id: parsed_body['incoming_webhook']['channel_id'],
-      configuration_url: parsed_body['incoming_webhook']['configuration_url'], 
-      url: parsed_body['incoming_webhook']['url'],
-      bot_user_id: parsed_body['bot']['bot_user_id'], 
-      bot_access_token: parsed_body['bot']['bot_access_token']
-    )
+    if parsed_body['ok']
+      slack_team = SlackTeam.new(
+        ok: parsed_body['ok'], 
+        access_token: parsed_body['access_token'],
+        scope: parsed_body['scope'], 
+        slack_user_id: parsed_body['user_id'],
+        team_name: parsed_body['team_name'], 
+        team_id: parsed_body['team_id'],
+        channel: parsed_body['incoming_webhook']['channel'], 
+        channel_id: parsed_body['incoming_webhook']['channel_id'],
+        configuration_url: parsed_body['incoming_webhook']['configuration_url'], 
+        url: parsed_body['incoming_webhook']['url'],
+        bot_user_id: parsed_body['bot']['bot_user_id'], 
+        bot_access_token: parsed_body['bot']['bot_access_token']
+      )
 
-    if slack_team.save
-      p "Success!"
-    else
-      p "What we have here is...failure to authenticate."
+      if slack_team.save
+        p "Success!"
+      else
+        p "What we have here is...failure to authenticate."
+      end
+
+      p slack_team
     end
-
-    p slack_team
     # {"ok"=>true, "access_token"=>"xoxp-4592131850-4592131860-35296188357-5ae4f8cc33", 
     # "scope"=>"identify,bot,commands,incoming-webhook", "user_id"=>"U04HE3VRA", "team_name"=>"Miami Tech", 
     #"team_id"=>"T04HE3VR0", "incoming_webhook"=>{"channel"=>"#emerge", "channel_id"=>"C118AHJ6Q", 
@@ -124,7 +126,7 @@ class SlackController < ApplicationController
       )
 
       text = event.save ? "event saved" : "event didn't save"
-      
+
       SlackTeam.query_stuffs(slack_team.access_token, from_user.slack_username, text)
       render text: text
     elsif text.split(' ')[0] == "@received" # see only received
