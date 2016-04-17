@@ -177,7 +177,10 @@ class SlackController < ApplicationController
 
       if payment.save
         p "we saved a payment"
-
+        response = Visa::Funds.pull
+        if response["approvalCode"].present?
+          Visa::Funds.push
+          p "pull response: #{response}"
 
         # actually make the fucking payment
         # visa api call goes here
