@@ -27,6 +27,28 @@ class SlackTeam < ActiveRecord::Base
     end
   end
 
+  def self.payment_succeeded_message(token, to_user_name, from_user_name, amount)
+    text_to = "#{from_user_name} sent you $#{amount}!"
+    text_from = "You send #{to_user_name} $#{amount}"
+    query_to = {
+      token: token,
+      channel: to_user_name,
+      text: text_to,
+      username: 'visapay',
+      as_user: false
+    }.to_query
+
+    query_from = {
+      token: token,
+      channel: from_user_name,
+      text: text_from,
+      username: 'visapay',
+      as_user: false
+    }.to_query
+    message_for_to_user = HTTParty.get("https://slack.com/api/chat.postMessage?#{query_to}")
+    message_for_from_user = HTTParty.get("https://slack.com/api/chat.postMessage?#{query_from}")
+  end
+
   def self.query_stuffs(token, channel, text)
     query = {
       token: token,
