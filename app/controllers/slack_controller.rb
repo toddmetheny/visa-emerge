@@ -13,29 +13,28 @@ class SlackController < ApplicationController
     parsed_body = JSON.parse(response.body)
     p "parsed_body: #{parsed_body}"
 
-    
-      slack_team = SlackTeam.new(
-        ok: parsed_body['ok'], 
-        access_token: parsed_body['access_token'],
-        scope: parsed_body['scope'], 
-        slack_user_id: parsed_body['user_id'],
-        team_name: parsed_body['team_name'], 
-        team_id: parsed_body['team_id'],
-        channel: parsed_body['incoming_webhook']['channel'], 
-        channel_id: parsed_body['incoming_webhook']['channel_id'],
-        configuration_url: parsed_body['incoming_webhook']['configuration_url'], 
-        url: parsed_body['incoming_webhook']['url'],
-        bot_user_id: parsed_body['bot']['bot_user_id'], 
-        bot_access_token: parsed_body['bot']['bot_access_token']
-      )
+    slack_team = SlackTeam.new(
+      ok: parsed_body['ok'], 
+      access_token: parsed_body['access_token'],
+      scope: parsed_body['scope'], 
+      slack_user_id: parsed_body['user_id'],
+      team_name: parsed_body['team_name'], 
+      team_id: parsed_body['team_id'],
+      channel: "#emerge", 
+      channel_id: parsed_body['incoming_webhook']['channel_id'],
+      configuration_url: parsed_body['incoming_webhook']['configuration_url'], 
+      url: parsed_body['incoming_webhook']['url'],
+      bot_user_id: parsed_body['bot']['bot_user_id'], 
+      bot_access_token: parsed_body['bot']['bot_access_token']
+    )
 
-      if slack_team.save
-        p "Success!"
-      else
-        p "What we have here is...failure to authenticate."
-      end
+    if slack_team.save
+      p "Success!"
+    else
+      p "What we have here is...failure to authenticate."
+    end
 
-      p slack_team
+    p slack_team
 
     # {"ok"=>true, "access_token"=>"xoxp-4592131850-4592131860-35296188357-5ae4f8cc33", 
     # "scope"=>"identify,bot,commands,incoming-webhook", "user_id"=>"U04HE3VRA", "team_name"=>"Miami Tech", 
@@ -56,6 +55,8 @@ class SlackController < ApplicationController
       slack_username: params[:user_name]
     )
 
+    p "from_user: #{from_user.slack_username}"
+
     to_slack_username = text.split(' ')[0]
     amount = text.split(' ')[1]
 
@@ -74,10 +75,12 @@ class SlackController < ApplicationController
       render text: "Please use the format: /visapay @user $X"
       return
     elsif text.split(' ')[0] == "@setup"
+      p "inside setup"
       cc_info = text.split(' ')
-
+      p "params username: #{params[:user_name]}"
+      p "from: #{from_user.slack_username}"
       user = User.find_by(slack_username: params[:user_name])
-
+      p "user: #{user.inspect}"
       card = Card.new(
         user_id: user.id,
         card_number: cc_info[1],
@@ -86,6 +89,7 @@ class SlackController < ApplicationController
       )
 
       if card.save
+        p "card: #{card.inspect}"
         text = "You successfully added a card."
         owed = Payment.where(to_username: "@#{from_user.slack_username}")
         
@@ -95,6 +99,7 @@ class SlackController < ApplicationController
             payment.to_card_id = card.id
             payment.status = "pending"
             if payment.save
+              p "payment saved"
               response = Visa::Funds.pull
               if response["approvalCode"].present?
                 Visa::Funds.push
@@ -117,7 +122,7 @@ class SlackController < ApplicationController
       render text: text
 
     elsif text.split(' ')[0] == "@create_event"
-
+      p "inside create event"
       event = Event.new(
         user_id: from_user.id,
         description: text.split('|')[1],
@@ -157,7 +162,7 @@ class SlackController < ApplicationController
       SlackTeam.query_stuffs(slack_team.access_token, from_user.slack_username, text_2)
       render text: text_2
 
-    elsif text.split(' ')[0] == "@paid_from"
+    # elsif text.split(' ')[0] == "@paid_from"
 
     elsif from_user.cards.count == 0
       text = "Setup your account by entering /visapay @setup CC# expiration csv"
@@ -183,37 +188,39 @@ class SlackController < ApplicationController
       SlackTeam.query_stuffs(slack_team.access_token, to_slack_username, text)
       render text: text
     else
-      p "to_user.last.cards.last.id: #{to_user.last.cards.last.id}"
-      payment = Payment.new(
-        from_user_id: from_user.id, 
-        to_user_id: to_user.first.id,
-        from_card_id: from_user.cards.last.id,
-        to_card_id: to_user.last.cards.last.id,
-        to_username: to_slack_username,
-        amount: amount
-      )
+      p "inside payment sent"
+      # unless to_user.blank?
+        payment = Payment.new(
+          from_user_id: from_user.id, 
+          to_user_id: to_user.first.id,
+          from_card_id: from_user.cards.last.id,
+          to_card_id: to_user.last.cards.last.id,
+          to_username: to_slack_username,
+          amount: amount
+        )
 
-      if payment.save
-        p "we saved a payment"
-        response = Visa::Funds.pull
-        if response["approvalCode"].present?
-          Visa::Funds.push
-          p "pull response: #{response}"
+        if payment.save
+          p "we saved a payment"
+          response = Visa::Funds.pull
+          if response["approvalCode"].present?
+            Visa::Funds.push
+            p "pull response: #{response}"
 
-          text = "Payment to #{to_slack_username} from @#{from_user.slack_username} is pending"
-          SlackTeam.query_stuffs(slack_team.access_token, to_slack_username, text)
-          SlackTeam.payment_succeeded_message(slack_team.access_token, to_slack_username, from_user.slack_username, amount)
-          text_2 = "success!"
+            text = "Payment to #{to_slack_username} from @#{from_user.slack_username} is pending"
+            SlackTeam.query_stuffs(slack_team.access_token, to_slack_username, text)
+            SlackTeam.payment_succeeded_message(slack_team.access_token, to_slack_username, from_user.slack_username, amount)
+            text_2 = "You successfully sent money to #{to_slack_username}!"
+          else
+            p "#{'!'*20}"
+            p "payment api call failed"
+            p "#{'!'*20}"
+            text_2 = "failure"
+          end
         else
-          p "#{'!'*20}"
-          p "payment api call failed"
-          p "#{'!'*20}"
-          text_2 = "failure"
+          p "payment didn't save"
+          text_2 = "Failure"
         end
-      else
-        p "payment didn't save"
-        text_2 = "Failure"
-      end
+      # end
 
       render text: text_2
     end

@@ -12,7 +12,7 @@ class Event < ActiveRecord::Base
 
     users.each do |user|
       Invoice.create(status: "unpaid", user_id: user.id, event_id: self.id)
-      text = "#{self.description} and YOU should /visapay #{self.payment_to} $#{self.amount_owed}"
+      text = "#{self.description} and #{user.slack_username} should /visapay #{self.payment_to} $#{self.amount_owed}"
       SlackTeam.query_stuffs(slack_team.access_token, user.slack_username, text)
     end
   end

@@ -8,7 +8,7 @@
 class Card < ActiveRecord::Base
   belongs_to :user
 
-  validates_presence_of :user_id, :card_number, :expiration, :csv
-  validates_uniqueness_of :card_number
+  # validates_presence_of :user_id, :card_number, :expiration, :csv
+  # validates_uniqueness_of :card_number
   
 end

@@ -50,6 +50,11 @@ class SlackTeam < ActiveRecord::Base
   end
 
   def self.query_stuffs(token, channel, text)
+    p "inside query stuffs"
+    p "channel: #{channel}"
+    unless channel.include?("@")
+      channel = "@#{channel}"
+    end
     query = {
       token: token,
       channel: channel,
@@ -60,7 +65,7 @@ class SlackTeam < ActiveRecord::Base
 
     response = HTTParty.get("https://slack.com/api/chat.postMessage?#{query}")
 
-    puts response.body
+    puts "query stuffs response: #{response.body}"
   end
 
   def self.received_payments(user_id)
